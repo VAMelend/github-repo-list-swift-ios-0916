@@ -8,9 +8,39 @@
 
 import UIKit
 
+var arrayDict: [[String : AnyObject]] = [[:]]
+
+
 class GithubAPIClient {
     
-}
+    class func getRepositories(with completion: @escaping ([[String: Any]]) -> Void) {
+        
+        let urlString = "https://api.github.com/repositories?client_id=\(clientID)&client_secret=\(clientSecret)"
+        
+        let url = URL(string: urlString)
+        
+        if let url = url {
+            let session = URLSession.shared
+            let dataTask = session.dataTask(with: url, completionHandler: { (data, response, error) in
+                if let unwrappedData = data {
+                    do {
+                        
+                        let responseJSON = try JSONSerialization.jsonObject(with: unwrappedData, options: []) as! [[String : Any]]
+                        completion(responseJSON)
+                        
+                    }
+                    catch {
+                        print("Yo. It's broken")
+                    }
+                }
+            })
+            dataTask.resume()
+        }
+        
+    }
     
+}
+
+
 
 
